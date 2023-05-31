@@ -68,7 +68,7 @@ moment = time.strftime('%Y-%m-%d__%H-%M-%S', time.localtime())
 with open('sessions/AIO'+moment+'.csv', 'w+') as f:
 	writer = csv.writer(f, dialect='excel')
 	# Header for the file. Keypoints with x & y coordinates and models confidence
-	writer.writerow(['nose x', 'nose y', 'nose c', 'left eye x', 'left eye y', 'left eye c', 'right eye x', 'right eye y', 'right eye c', 'left ear x', 'left ear y', 'left ear c', 'right ear x', 'right ear y', 'right ear c', 'left shoulder x', 'left shoulder y', 'left shoulder c', 'right shoulder x', 'right shoulder y', 'right shoulder c', 'left elbow x', 'left elbow y', 'left elbow c', 'right elbow x', 'right elbow y', 'right elbow c', 'left wrist x', 'left wrist y', 'left wrist c', 'right wrist x', 'right wrist y', 'right wrist c', 'left hip x', 'left hip y', 'left hip c', 'right hip x', 'right hip y', 'right hip c', 'left knee x', 'left knee y', 'left knee c', 'right knee x', 'right knee y', 'right knee c', 'left ankle x', 'left ankle y', 'left ankle c', 'right ankle x', 'right ankle y', 'right ankle c'])
+	writer.writerow(['nose x', 'nose y', 'nose c', 'left eye x', 'left eye y', 'left eye c', 'right eye x', 'right eye y', 'right eye c', 'left ear x', 'left ear y', 'left ear c', 'right ear x', 'right ear y', 'right ear c', 'left shoulder x', 'left shoulder y', 'left shoulder c', 'right shoulder x', 'right shoulder y', 'right shoulder c', 'left elbow x', 'left elbow y', 'left elbow c', 'right elbow x', 'right elbow y', 'right elbow c', 'left wrist x', 'left wrist y', 'left wrist c', 'right wrist x', 'right wrist y', 'right wrist c', 'left hip x', 'left hip y', 'left hip c', 'right hip x', 'right hip y', 'right hip c', 'left knee x', 'left knee y', 'left knee c', 'right knee x', 'right knee y', 'right knee c', 'left ankle x', 'left ankle y', 'left ankle c', 'right ankle x', 'right ankle y', 'right ankle c', 'Timestamp'])
 	
 	#video_path = 'videos/1.mp4'	# This is just for testing with videos.
 	video_path = 0			
@@ -95,6 +95,9 @@ with open('sessions/AIO'+moment+'.csv', 'w+') as f:
 		keypoints_copy = keypoints_with_scores
 		keypoints_list = keypoints_copy.flatten()
 		keypoints_list.tolist()
+		# Timestamp for the detection. Same format as OpenBCI.
+		time_stamp = str(time.time() / 1000000000) + 'E9'
+		keypoints_list = np.append(keypoints_list, time_stamp)
 		writer.writerow(keypoints_list)
 		
 		# Calling functions to draw keypoints & connections on the frame
