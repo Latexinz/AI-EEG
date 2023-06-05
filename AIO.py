@@ -17,7 +17,7 @@ import time
 def draw_keypoints(frame, keypoints, confidence_threshold):
 	y, x, c = frame.shape
 	shaped = np.squeeze(np.multiply(keypoints, [y,x,1]))
-    
+	
 	for kp in shaped:
 		ky, kx, kp_conf = kp
 		if kp_conf > confidence_threshold:
@@ -45,11 +45,11 @@ EDGES = {
     (14, 16): 'c'
 }
 
-			
+
 def draw_connections(frame, keypoints, edges, confidence_threshold):
 	y, x, c = frame.shape
 	shaped = np.squeeze(np.multiply(keypoints, [y,x,1]))
-    
+	
 	for edge, color in edges.items():
 		p1, p2 = edge
 		y1, x1, c1 = shaped[p1]
@@ -65,21 +65,27 @@ interpreter.allocate_tensors()
 # Timestamp for the filename.
 moment = time.strftime('%Y-%m-%d__%H-%M-%S', time.localtime())	 
 
-with open('sessions/AIO'+moment+'.csv', 'w+') as f:
+with open('sessions/AIO-'+moment+'.csv', 'w+') as f:
 	writer = csv.writer(f, dialect='excel')
 	# Header for the file. Keypoints with x & y coordinates and models confidence
-	writer.writerow(['nose x', 'nose y', 'nose c', 'left eye x', 'left eye y', 'left eye c', 'right eye x', 'right eye y', 'right eye c', 'left ear x', 'left ear y', 'left ear c', 'right ear x', 'right ear y', 'right ear c', 'left shoulder x', 'left shoulder y', 'left shoulder c', 'right shoulder x', 'right shoulder y', 'right shoulder c', 'left elbow x', 'left elbow y', 'left elbow c', 'right elbow x', 'right elbow y', 'right elbow c', 'left wrist x', 'left wrist y', 'left wrist c', 'right wrist x', 'right wrist y', 'right wrist c', 'left hip x', 'left hip y', 'left hip c', 'right hip x', 'right hip y', 'right hip c', 'left knee x', 'left knee y', 'left knee c', 'right knee x', 'right knee y', 'right knee c', 'left ankle x', 'left ankle y', 'left ankle c', 'right ankle x', 'right ankle y', 'right ankle c', 'Timestamp'])
+	writer.writerow(['nose y', 'nose x', 'nose c', 'left eye y', 'left eye x', 'left eye c', 'right eye y', 'right eye x', 'right eye c', 'left ear y', 'left ear x', 'left ear c', 'right ear y', 'right ear x', 'right ear c', 'left shoulder y', 'left shoulder x', 'left shoulder c', 'right shoulder y', 'right shoulder x', 'right shoulder c', 'left elbow y', 'left elbow x', 'left elbow c', 'right elbow y', 'right elbow x', 'right elbow c', 'left wrist y', 'left wrist x', 'left wrist c', 'right wrist y', 'right wrist x', 'right wrist c', 'left hip y', 'left hip x', 'left hip c', 'right hip y', 'right hip x', 'right hip c', 'left knee y', 'left knee x', 'left knee c', 'right knee y', 'right knee x', 'right knee c', 'left ankle y', 'left ankle x', 'left ankle c', 'right ankle y', 'right ankle x', 'right ankle c', 'Timestamp'])
 	
-	#video_path = 'videos/1.mp4'	# This is just for testing with videos.
-	video_path = 0			
+
+	video_path = 0		# Change this to 'videos/1.mp4' if testing without webcam	
 	cap = cv2.VideoCapture(video_path)
-	cap.set(cv2.CAP_PROP_FOURCC, cv2.VideoWriter_fourcc('M', 'J', 'P', 'G')) # depends on fourcc available camera
+	cap.set(cv2.CAP_PROP_FOURCC, cv2.VideoWriter_fourcc('M', 'J', 'P', 'G')) # Depends on fourcc available camera
 	cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1280)
 	cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 720)
 	cap.set(cv2.CAP_PROP_FPS, 60)
+	
+	prev_frame_time = 0
+	new_frame_time = 0
+	
 	while cap.isOpened():
 		ret, frame = cap.read()
 		
+		# Reshape image
+		frame = frame[0:720,280:1000]
 		img = frame.copy()
 		img = tf.image.resize_with_pad(np.expand_dims(img, axis=0), 192,192)
 		input_image = tf.cast(img, dtype=tf.float32)
@@ -87,30 +93,41 @@ with open('sessions/AIO'+moment+'.csv', 'w+') as f:
 		input_details = interpreter.get_input_details()
 		output_details = interpreter.get_output_details()
 		
+		# Make predictions
 		interpreter.set_tensor(input_details[0]['index'], np.array(input_image))
 		interpreter.invoke()
-		keypoints_with_scores = interpreter.get_tensor(output_details[0]['index'])
+		keypoints_with_scores = interpreter.get_tensor(output_details[0]['index'])		
 		
-		# Logging detections from frame
+		# Turning the keypoints array into a list
 		keypoints_copy = keypoints_with_scores
 		keypoints_list = keypoints_copy.flatten()
 		keypoints_list.tolist()
-		# Timestamp for the detection. Same format as OpenBCI.
+		# Timestamp for the detections. Same format as OpenBCI.
 		time_stamp = str(time.time() / 1000000000) + 'E9'
 		keypoints_list = np.append(keypoints_list, time_stamp)
+		# Logging the keypoints into the csv file
 		writer.writerow(keypoints_list)
 		
 		# Calling functions to draw keypoints & connections on the frame
 		draw_connections(frame, keypoints_with_scores, EDGES, 0.4)
 		draw_keypoints(frame, keypoints_with_scores, 0.4)
 		
-		# Used for checking fps
+		# Use to check camera is outputting 60fps
 		#fps = cap.get(cv2.CAP_PROP_FPS)
 		#print(fps)
 		
+		# Displying detection fps
+		font = cv2.FONT_HERSHEY_SIMPLEX
+		new_frame_time = time.time()
+		fps = 1/(new_frame_time-prev_frame_time)
+		prev_frame_time = new_frame_time
+		fps = int(fps)
+		fps = str(fps)
+		cv2.putText(frame, fps, (7, 70), font, 3, (100, 255, 0), 3, cv2.LINE_AA)
+		
 		cv2.imshow('MoveNet Lightning', frame)
 		
-		while cv2.waitKey(10) & 0xFF==ord('q'):
+		while cv2.waitKey(1) & 0xFF==ord('q'):
 			break
 
 	cap.release()
