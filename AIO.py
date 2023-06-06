@@ -59,7 +59,7 @@ def draw_connections(frame, keypoints, edges, confidence_threshold):
 			cv2.line(frame, (int(x1), int(y1)), (int(x2), int(y2)), (0,0,255), 2)
 
 
-interpreter = tf.lite.Interpreter(model_path='models/lite-model_movenet_singlepose_lightning_3.tflite')
+interpreter = tf.lite.Interpreter(model_path='models/lite-model_movenet_singlepose_lightning_3.tflite', num_threads=8)
 interpreter.allocate_tensors()
 
 # Timestamp for the filename.
@@ -84,7 +84,7 @@ with open('sessions/AIO-'+moment+'.csv', 'w+') as f:
 	while cap.isOpened():
 		ret, frame = cap.read()
 		
-		# Reshape image
+		# Crop & resize image
 		frame = frame[0:720,280:1000]
 		img = frame.copy()
 		img = tf.image.resize_with_pad(np.expand_dims(img, axis=0), 192,192)
@@ -121,8 +121,7 @@ with open('sessions/AIO-'+moment+'.csv', 'w+') as f:
 		new_frame_time = time.time()
 		fps = 1/(new_frame_time-prev_frame_time)
 		prev_frame_time = new_frame_time
-		fps = int(fps)
-		fps = str(fps)
+		fps = str(int(fps))
 		cv2.putText(frame, fps, (7, 70), font, 3, (100, 255, 0), 3, cv2.LINE_AA)
 		
 		cv2.imshow('MoveNet Lightning', frame)
