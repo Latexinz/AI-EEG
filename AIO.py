@@ -12,6 +12,7 @@ import pandas as pd
 import cv2
 import csv
 import time
+from os import cpu_count
 
 
 def draw_keypoints(frame, keypoints, confidence_threshold):
@@ -59,7 +60,14 @@ def draw_connections(frame, keypoints, edges, confidence_threshold):
 			cv2.line(frame, (int(x1), int(y1)), (int(x2), int(y2)), (0,0,255), 2)
 
 
-interpreter = tf.lite.Interpreter(model_path='models/lite-model_movenet_singlepose_lightning_3.tflite', num_threads=8)
+# Use half the CPU for the interpreter, leave the rest for other stuff.
+n_cores = int(cpu_count() / 2)
+if cpu_count() > 3:
+	print('Number of CPU threads assigned to the interpreter: ', n_cores)
+else:
+	print('Number of CPU threads assigned to the interpreter: 1')
+
+interpreter = tf.lite.Interpreter(model_path='models/lite-model_movenet_singlepose_lightning_3.tflite', num_threads=n_cores)
 interpreter.allocate_tensors()
 
 # Timestamp for the filename.
