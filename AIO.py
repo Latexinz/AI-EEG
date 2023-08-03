@@ -124,7 +124,7 @@ with open('sessions/AIO-'+moment+'.csv', 'w+') as f:
 		#fps = cap.get(cv2.CAP_PROP_FPS)
 		#print(fps)
 		
-		# Displying detection fps
+		# Displaying detection fps
 		font = cv2.FONT_HERSHEY_SIMPLEX
 		new_frame_time = time.time()
 		fps = 1/(new_frame_time-prev_frame_time)
@@ -139,3 +139,4 @@ with open('sessions/AIO-'+moment+'.csv', 'w+') as f:
 
 	cap.release()
 	cv2.destroyAllWindows()
+	f.close()
