@@ -42,7 +42,7 @@ params.master_board = args.master_board
 moment = time.strftime('%Y-%m-%d__%H-%M-%S', time.localtime())
 
 with open('sessions/EEG-'+moment+'.csv', 'w+') as f:
-	writer = csv.writer(f, dialect='excel')
+	writer = csv.writer(f, delimiter='\t', dialect='excel')
 	writer.writerow(['Sample Index', 'EXG Channel 0', 'EXG Channel 1', 'EXG Channel 2', 'EXG Channel 3', 'EXG Channel 4', 'EXG Channel 5', 'EXG Channel 6', 'EXG Channel 7', 'EXG Channel 8', 'EXG Channel 9', 'EXG Channel 10', 'EXG Channel 11', 'EXG Channel 12', 'EXG Channel 13', 'EXG Channel 14', 'EXG Channel 15', 'Accel Channel 0', 'Accel Channel 1', 'Accel Channel 2', 'Other', 'Other', 'Other', 'Other', 'Other', 'Other', 'Other', 'Analog Channel 0', 'Analog Channel 1', 'Analog Channel 2', 'Timestamp', 'Other'])
 	f.close()
 
