@@ -32,6 +32,6 @@ Pose_data['Timestamp'] = Pose_data['Timestamp'].round(2)
 Pose_data = Pose_data[:-600]
 
 merged_data = Pose_data.merge(EEG_data, how='inner', on='Timestamp')
-#merged_data = merged_data.drop(merged_data.columns[['Timestamp']], axis=1) #Doesn't work lmao
+merged_data = merged_data.drop(['Timestamp'], axis=1)
 merged_data.to_csv('prepared_data/Data.csv', sep=',', index=False)
 
