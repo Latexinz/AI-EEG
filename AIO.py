@@ -79,7 +79,7 @@ with open('sessions/AIO-'+moment+'.csv', 'w+') as f:
 	writer.writerow(['nose y', 'nose x', 'nose c', 'left eye y', 'left eye x', 'left eye c', 'right eye y', 'right eye x', 'right eye c', 'left ear y', 'left ear x', 'left ear c', 'right ear y', 'right ear x', 'right ear c', 'left shoulder y', 'left shoulder x', 'left shoulder c', 'right shoulder y', 'right shoulder x', 'right shoulder c', 'left elbow y', 'left elbow x', 'left elbow c', 'right elbow y', 'right elbow x', 'right elbow c', 'left wrist y', 'left wrist x', 'left wrist c', 'right wrist y', 'right wrist x', 'right wrist c', 'left hip y', 'left hip x', 'left hip c', 'right hip y', 'right hip x', 'right hip c', 'left knee y', 'left knee x', 'left knee c', 'right knee y', 'right knee x', 'right knee c', 'left ankle y', 'left ankle x', 'left ankle c', 'right ankle y', 'right ankle x', 'right ankle c', 'Timestamp'])
 	
 
-	video_path = 0		# Change this to 'videos/1.mp4' if testing without webcam	
+	video_path = 2		# Change this to 'videos/1.mp4' if testing without webcam	
 	cap = cv2.VideoCapture(video_path)
 	cap.set(cv2.CAP_PROP_FOURCC, cv2.VideoWriter_fourcc('M', 'J', 'P', 'G')) # Depends on fourcc available camera
 	cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1280)
@@ -117,8 +117,8 @@ with open('sessions/AIO-'+moment+'.csv', 'w+') as f:
 		writer.writerow(keypoints_list)
 		
 		# Calling functions to draw keypoints & connections on the frame
-		draw_connections(frame, keypoints_with_scores, EDGES, 0.4)
-		draw_keypoints(frame, keypoints_with_scores, 0.4)
+		draw_connections(frame, keypoints_with_scores, EDGES, 0.3)
+		draw_keypoints(frame, keypoints_with_scores, 0.3)
 		
 		# Use to check camera is outputting 60fps
 		#fps = cap.get(cv2.CAP_PROP_FPS)

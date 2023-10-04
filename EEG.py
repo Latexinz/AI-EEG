@@ -3,10 +3,10 @@ Collects EEG data from OpenBCI.
 
 See documentation for the API https://brainflow.readthedocs.io/en/stable/UserAPI.html#python-api-reference
 
-lsusb to check usb dongle for serial port
-
 cyton daisy
 --board-id 2
+synthetic board
+--board-id -1
 """
 
 import argparse
@@ -21,10 +21,10 @@ parser = argparse.ArgumentParser() # use docs to check which parameters are requ
 parser.add_argument('--ip-port', type=int, help='ip port', required=False, default=0)
 parser.add_argument('--ip-protocol', type=int, help='ip protocol, check IpProtocolType enum', required=False, default=0)
 parser.add_argument('--ip-address', type=str, help='ip address', required=False, default='')
-parser.add_argument('--serial-port', type=str, help='serial port', required=False, default='')
+parser.add_argument('--serial-port', type=str, help='serial port', required=False, default='/dev/ttyUSB0')
 parser.add_argument('--mac-address', type=str, help='mac address', required=False, default='')
 parser.add_argument('--serial-number', type=str, help='serial number', required=False, default='')
-parser.add_argument('--board-id', type=int, help='board id, check docs to get a list of supported boards', required=False, default=BoardIds.SYNTHETIC_BOARD)
+parser.add_argument('--board-id', type=int, help='board id, check docs to get a list of supported boards', required=False, default=BoardIds.CYTON_DAISY_BOARD)
 parser.add_argument('--master-board', type=int, help='master board id for streaming and playback boards', required=False, default=BoardIds.NO_BOARD)
 args = parser.parse_args()
 
@@ -52,7 +52,7 @@ board.start_stream ()       #Start streaming data, this method stores data in ri
 
 while True:
 	try:               
-        	time.sleep(10)
+        	time.sleep(4)
         	data = board.get_board_data()  # get all data and remove it from internal buffer
         	DataFilter.write_file(data, 'sessions/EEG-'+moment+'.csv', 'a')
 		
