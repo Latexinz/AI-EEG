@@ -3,8 +3,10 @@
 Tested on Ubuntu 20.05
 
 Hardware used:
-	-OpenBCI Ultracortex 'Mark IV' EEG headset with cyton daisy board
-	-Logitech C922 webcam
+
+-OpenBCI Ultracortex 'Mark IV' EEG headset with cyton daisy board
+
+-Logitech C922 webcam
 
 
 Install necessary python libraries by running 'sh install.sh' in terminal.
