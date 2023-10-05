@@ -3,6 +3,8 @@ Model used can be found here: https://tfhub.dev/google/lite-model/movenet/single
 
 This program runs a pose detection AI model on webcam video and records each keypoints position and detection confidence.
 
+video_path = 0 on desktop, 2 on laptop
+
 Camera used is Logitech C922, which supports 60fps @ 1280x720
 '''
 
