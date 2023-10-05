@@ -1,6 +1,6 @@
 # AI-EEG
 
-Tested on Ubuntu 20.05
+Tested on Ubuntu 20.04.6
 
 Hardware used:
 
