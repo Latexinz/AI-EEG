@@ -1,7 +1,8 @@
 '''
-Removes last ~10s of recordings
-Filters the EEG data.
+Removes unneccessary data.
+Filters the EEG.
 Merges pose detection keypoint data with EEG data by timestamp.
+Splits the data into training, validation and testing data.
 '''
 
 import glob
@@ -19,13 +20,14 @@ EEG_data['Timestamp'] = EEG_data['Timestamp'].round(2)
 channel_num = 0
 while channel_num < 16:                     #loop to go through each channel and apply filters to raw EEG signals
 	channel_name = 'EXG Channel ' + str(channel_num)
-	EEG_data[channel_name] = butter_highpass_filter(EEG_data[channel_name], 0.5, 250)
-	EEG_data[channel_name] = butter_bandpass_filter(EEG_data[channel_name], 0.5, 40.0, 250.0, order=6)
+	EEG_data[channel_name] = butter_highpass_filter(EEG_data[channel_name], 0.5, 125)
+	EEG_data[channel_name] = butter_bandpass_filter(EEG_data[channel_name], 0.5, 40.0, 125.0, order=6)
 	EEG_data[channel_name] = Implement_Notch_Filter(0.004, 1, 50, 1, 2, 'butter', EEG_data[channel_name])
 	channel_num = channel_num + 1
 
 
 Pose_data = pd.concat([pd.read_csv(file, delimiter=',') for file in glob.glob('sessions/AIO*.csv')])
+Pose_data = Pose_data.drop(Pose_data.columns[[2, 5, 8, 11, 14, 17, 20, 23, 26, 29, 32, 35, 38, 41, 44, 47, 50]], axis=1)
 Pose_data['Timestamp'] = Pose_data['Timestamp'].round(2)
 
 merged_data = Pose_data.merge(EEG_data, how='inner', on='Timestamp') #merge the datasets
