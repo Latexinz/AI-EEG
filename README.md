@@ -17,3 +17,7 @@ with 'sudo usermod -a -G dialout <username>' and restart.
 Run the python scripts to record data with 'bash run.sh' in terminal.
 
 After that run Data_merge.py to merge the two recordings into a single file.
+
+Train the model with train_model.py. This saves the model as both keras and tflite.
+
+Test the model with Demo.py
