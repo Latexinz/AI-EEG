@@ -30,7 +30,7 @@ validation_labels = np.array(validation_keypoints[outputs])
 validation_eeg = np.array(validation_keypoints[inputs])
 
 #Train the model
-pose_model = tf.keras.Sequential([layers.Dense(16), layers.Dense(64), layers.Dense(34)])
+pose_model = tf.keras.Sequential([layers.Dense(16), layers.Dense(26), layers.Dense(26), layers.Dense(34)])
 pose_model.compile(loss = tf.keras.losses.MeanSquaredError(), optimizer = tf.keras.optimizers.Adam())
 pose_model.fit(training_eeg, training_labels, epochs=num_e, validation_data=(validation_eeg, validation_labels))
 
@@ -45,10 +45,10 @@ results = pose_model.evaluate(test_eeg, test_labels)
 print('test loss & acc:', results)
 
 #Saving the model
-pose_model.save('models/keras/EEG_pose_R_622_'+str(num_e)+'_v2.keras')
+pose_model.save('models/keras/EEG_pose_R_811_'+str(num_e)+'_v4.keras')
 
 #Convert to tflite and save
 converter = tf.lite.TFLiteConverter.from_keras_model(pose_model)
 tflite_model = converter.convert()
-with open('models/tflite/EEG_pose_R_622_'+str(num_e)+'_v2.tflite', 'wb') as f:
+with open('models/tflite/EEG_pose_R_811_'+str(num_e)+'_v4.tflite', 'wb') as f:
   f.write(tflite_model)
