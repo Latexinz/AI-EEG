@@ -30,8 +30,9 @@ Pose_data = pd.concat([pd.read_csv(file, delimiter=',') for file in glob.glob('s
 Pose_data = Pose_data.drop(Pose_data.columns[[2, 5, 8, 11, 14, 17, 20, 23, 26, 29, 32, 35, 38, 41, 44, 47, 50]], axis=1)
 Pose_data['Timestamp'] = Pose_data['Timestamp'].round(2)
 
-merged_data = Pose_data.merge(EEG_data, how='inner', on='Timestamp') #merge the datasets
+merged_data = EEG_data.merge(Pose_data, how='left', on='Timestamp') #merge the datasets
 merged_data = merged_data.drop(['Timestamp'], axis=1)
+merged_data = merged_data.fillna(method='ffill')
 trn_data, vld_data, tst_data = np.split(merged_data, [int(.6*len(merged_data)), int(.8*len(merged_data))]) #split the data into training, validation and testing data
 trn_data.to_csv('prepared_data/Training_Data.csv', sep=',', index=False)
 vld_data.to_csv('prepared_data/Validation_Data.csv', sep=',', index=False)
